@@ -52,7 +52,7 @@ class MenuBarAnimator {
     ]);
     
     this.tray.setContextMenu(contextMenu);
-    this.tray.setToolTip('Iron Man Anvil Animation');
+    this.tray.setToolTip('Tony Stark\'s Workshop - Pixelated Iron Man Animation');
     
     // Start animation by default
     this.startAnimation(500); // Default 500ms interval
@@ -173,7 +173,10 @@ app.on('before-quit', () => {
   }
 });
 
-// macOS specific: Hide dock icon for menu bar only app
+// Platform specific: Hide dock icon on macOS, set system tray on Windows
 if (process.platform === 'darwin') {
   app.dock.hide();
+} else if (process.platform === 'win32') {
+  // Windows-specific settings can go here if needed
+  // The tray will work automatically in the system tray
 }

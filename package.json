@@ -1,13 +1,15 @@
 {
   "name": "cool-shit",
   "version": "1.0.0",
-  "description": "Tony Stark's pixelated workshop in your macOS menu bar",
+  "description": "Tony Stark's pixelated workshop in your system tray/menu bar",
   "main": "main.js",
-  "scripts": {
+      "scripts": {
     "start": "electron .",
     "dev": "electron . --dev",
     "build": "electron-builder",
     "build-mac": "electron-builder --mac",
+    "build-win": "electron-builder --win",
+    "build-all": "electron-builder --mac --win",
     "pack": "electron-builder --dir"
   },
   "keywords": ["electron", "menubar", "animation", "pixel-art"],
@@ -34,6 +36,25 @@
           "arch": ["x64", "arm64"]
         }
       ]
+    },
+    "win": {
+      "icon": "logo.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64", "ia32"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
     },
     "files": [
       "main.js",
