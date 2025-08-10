@@ -1,0 +1,41 @@
+{
+  "name": "menubar-animated",
+  "version": "1.0.0",
+  "description": "Animated pixel art in macOS menu bar - Iron Man anvil scene",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build-mac": "electron-builder --mac",
+    "pack": "electron-builder --dir"
+  },
+  "keywords": ["electron", "menubar", "animation", "pixel-art"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.yourname.menubar-animated",
+    "productName": "Menubar Animated",
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ]
+    },
+    "files": [
+      "main.js",
+      "assets/**/*",
+      "node_modules/**/*"
+    ]
+  }
+}
