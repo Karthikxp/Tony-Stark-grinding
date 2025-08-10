@@ -1,14 +1,16 @@
-# Menubar Animated - Iron Man Anvil Scene
+# Tony Stark's Workshop - Pixelated Menubar Animation 🔨⚡
 
-A macOS menu bar application that displays animated pixel art, specifically recreating the iconic Iron Man anvil-hitting scene.
+Bring Tony Stark's genius to your macOS menu bar! Watch a pixelated Tony work tirelessly on his first Iron Man prototype, right from your desktop. This Electron.js app brings the iconic cave workshop scene to life with charming 8-bit style animation.
 
 ## Features
 
-- 🎨 Two-frame pixel art animation in the menu bar
-- ⚡ Adjustable animation speeds (100ms to 1000ms)
-- 🎛️ Right-click context menu for controls
-- 🚀 Lightweight Electron.js app
-- 💻 macOS menu bar integration (no dock icon)
+- 🤖 **Pixelated Tony Stark**: Watch Tony hammer away at his first prototype
+- 🎨 **Retro 8-bit Style**: Charming pixel art brings nostalgia to your workflow
+- ⚡ **Adjustable Workshop Pace**: Control how fast Tony works (100ms to 1000ms)
+- 🔧 **Interactive Workshop**: Right-click to control Tony's workspace
+- 🚀 **Lightweight & Fun**: Minimal resource usage, maximum entertainment
+- 💻 **Menu Bar Genius**: Lives quietly in your menu bar, no dock clutter
+- 🦾 **Mark I Vibes**: Relive the cave workshop from the first Iron Man movie
 
 ## Setup
 
@@ -17,52 +19,56 @@ A macOS menu bar application that displays animated pixel art, specifically recr
    npm install
    ```
 
-2. **Add your pixel art:**
-   - Place your two animation frames in the `assets/` folder
-   - Name them `frame1.png` and `frame2.png`
-   - **Optimal size: 22x22 pixels** (PNG format with transparency)
+2. **Add Tony's workshop frames:**
+   - Create your pixelated Tony Stark animation frames in the `assets/` folder
+   - Name them `frame1.png` (Tony with hammer raised) and `frame2.png` (Tony striking the anvil)
+   - **Optimal size: 22x22 pixels** (PNG format with transparency for that crisp pixel art look)
 
-3. **Run the app:**
+3. **Fire up Tony's workshop:**
    ```bash
    npm start
    ```
+   
+   Watch as pixelated Tony starts working on his first Iron Man suit!
 
-## Controls
+## Workshop Controls
 
-Right-click the menu bar icon to access:
-- **Toggle Animation** - Start/stop the animation
-- **Set Speed** - Choose from Slow, Medium, Fast, or Very Fast
-- **Quit** - Close the application
+Right-click Tony's workshop to access:
+- **Toggle Workshop** - Give Tony a break or get him back to work
+- **Set Work Pace** - Control Tony's productivity:
+  - *Slow* (1000ms) - Tony takes his time, methodical genius
+  - *Medium* (500ms) - Steady progress on the Mark I
+  - *Fast* (200ms) - Focused and determined 
+  - *Very Fast* (100ms) - Urgent cave escape mode!
+- **Close Workshop** - End Tony's work session
 
-## Building
+## Share Tony's Workshop
 
-To create a distributable app:
+Create a distributable version to share the genius:
 ```bash
 npm run build-mac
 ```
 
-This will create a `.dmg` file in the `dist/` folder.
+This creates a shiny `.dmg` file in the `dist/` folder - perfect for sharing Tony's workshop with fellow Marvel fans!
 
-## Development
+## Workshop Development
 
-For development with auto-reload:
+For developing new features with auto-reload:
 ```bash
 npm run dev
 ```
 
-## Customization
+## Customize the Workshop
 
-- Modify `main.js` to change animation behavior
-- Adjust frame timing in the speed options
-- Add more frames by extending the `frames` array
-- Customize the context menu options
+Make it your own Iron Man experience:
+- **Modify `main.js`** - Change how Tony works and moves
+- **Adjust timing** - Fine-tune Tony's hammer strikes
+- **Add more frames** - Create a longer animation sequence (Tony welding, sparks flying, etc.)
+- **Workshop themes** - Customize the right-click menu with more Marvel references
 
-## Iron Man Anvil Scene
 
-Perfect for recreating that iconic scene where Tony Stark is forging! Create two frames:
-1. **Frame 1**: Hammer raised up
-2. **Frame 2**: Hammer striking the anvil
+### Your Pixel Art Mission:
+Create two epic 22x22 pixel frames:
 
-The animation will continuously cycle between these frames, creating the hammering effect right in your menu bar.
 
-Enjoy your animated menu bar! 🔨⚡
+**"I am Iron Man"**
