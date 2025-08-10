@@ -25,7 +25,9 @@
     },
     "mac": {
       "category": "public.app-category.utilities",
-              "icon": "logo.png",
+      "icon": "logo.png",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
       "target": [
         {
           "target": "dmg",
