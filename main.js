@@ -1,4 +1,4 @@
-const { app, Tray, Menu, nativeImage } = require('electron');
+const { app, Tray, Menu, nativeImage, nativeTheme, systemPreferences } = require('electron');
 const path = require('path');
 
 class MenuBarAnimator {
@@ -8,6 +8,7 @@ class MenuBarAnimator {
     this.animationInterval = null;
     this.frames = [];
     this.isAnimating = false;
+    this.forceTheme = null; // null = auto, 'light' = force light, 'dark' = force dark
   }
 
   createTray() {
@@ -16,6 +17,20 @@ class MenuBarAnimator {
     
     // Create tray with first frame
     this.tray = new Tray(this.frames[0]);
+    
+    // Listen for theme changes and reload frames accordingly
+    nativeTheme.on('updated', () => {
+      console.log('🔄 Theme change detected, reloading frames...');
+      const oldFrames = this.frames.length;
+      this.loadFrames();
+      // Update current frame display
+      if (this.tray && this.frames.length > 0) {
+        this.tray.setImage(this.frames[this.currentFrame]);
+        console.log('✅ Frames updated and applied to tray');
+      } else {
+        console.log('❌ Failed to update frames');
+      }
+    });
     
     // Set up context menu
     const contextMenu = Menu.buildFromTemplate([
@@ -46,6 +61,67 @@ class MenuBarAnimator {
       },
       { type: 'separator' },
       {
+        label: 'Refresh Frames (Theme)',
+        click: () => {
+          console.log('🔄 Manually refreshing frames...');
+          this.loadFrames();
+          if (this.tray && this.frames.length > 0) {
+            this.tray.setImage(this.frames[this.currentFrame]);
+          }
+        }
+      },
+      {
+        label: 'Theme Override',
+        submenu: [
+          {
+            label: 'Auto (System Detection)',
+            click: () => {
+              this.forceTheme = null;
+              console.log('🔄 Theme override: Auto detection enabled');
+              this.loadFrames();
+              if (this.tray && this.frames.length > 0) {
+                this.tray.setImage(this.frames[this.currentFrame]);
+              }
+            }
+          },
+          {
+            label: 'Force Light Menubar (Use Black Frames)',
+            click: () => {
+              this.forceTheme = 'light';
+              console.log('🔄 Theme override: Forcing light menubar (black frames)');
+              this.loadFrames();
+              if (this.tray && this.frames.length > 0) {
+                this.tray.setImage(this.frames[this.currentFrame]);
+              }
+            }
+          },
+          {
+            label: 'Force Dark Menubar (Use Original Frames)',
+            click: () => {
+              this.forceTheme = 'dark';
+              console.log('🔄 Theme override: Forcing dark menubar (original frames)');
+              this.loadFrames();
+              if (this.tray && this.frames.length > 0) {
+                this.tray.setImage(this.frames[this.currentFrame]);
+              }
+            }
+          }
+        ]
+      },
+      {
+        label: 'Debug Theme Info',
+        click: () => {
+          const shouldUseDark = nativeTheme.shouldUseDarkColors;
+          const themeSource = nativeTheme.themeSource;
+          console.log(`🐛 Debug Theme Info:
+            - shouldUseDarkColors: ${shouldUseDark}
+            - themeSource: ${themeSource}
+            - forceTheme: ${this.forceTheme || 'auto'}
+            - Current frame set: ${shouldUseDark ? 'Dark (original)' : 'Light (black)'}
+          `);
+        }
+      },
+      {
         label: 'Quit',
         click: () => app.quit()
       }
@@ -60,12 +136,69 @@ class MenuBarAnimator {
 
   loadFrames() {
     try {
-      // Load frame 1 (e.g., hammer up position)
-      const frame1Path = path.join(__dirname, 'assets', 'frame1.png');
-      const frame1 = nativeImage.createFromPath(frame1Path);
+      // Check multiple indicators for menubar appearance
+      const shouldUseDarkColors = nativeTheme.shouldUseDarkColors;
+      const themeSource = nativeTheme.themeSource;
       
-      // Load frame 2 (e.g., hammer down position)
-      const frame2Path = path.join(__dirname, 'assets', 'frame2.png');
+      // Check for manual override first
+      let isMenuBarDark;
+      if (this.forceTheme === 'light') {
+        isMenuBarDark = false;
+        console.log('🔧 Manual override: Forcing light menubar detection');
+      } else if (this.forceTheme === 'dark') {
+        isMenuBarDark = true;
+        console.log('🔧 Manual override: Forcing dark menubar detection');
+      } else {
+        // Auto detection
+        isMenuBarDark = shouldUseDarkColors;
+      }
+      
+      // On macOS, try to get more accurate menubar appearance detection
+      if (process.platform === 'darwin') {
+        try {
+          // Check if we can get the accent color - this helps determine actual appearance
+          const accentColor = systemPreferences.getAccentColor();
+          
+          // Additional check: if system is in auto mode and we have a light wallpaper,
+          // the menubar might still be light even with dark mode enabled
+          if (themeSource === 'system') {
+            // For now, we'll assume if the user explicitly changes appearance,
+            // they want the opposite of what's detected
+            // This is a workaround until we can detect actual menubar brightness
+          }
+        } catch (error) {
+          console.log('Could not get system preferences, using nativeTheme');
+        }
+      }
+      
+      console.log(`🔍 Theme debug info:
+        - shouldUseDarkColors: ${shouldUseDarkColors}
+        - themeSource: ${themeSource}
+        - Platform: ${process.platform}
+        - Detected menubar: ${isMenuBarDark ? 'Dark' : 'Light'}`);
+      
+      // Use light frames (black) when menubar appears light
+      const isLightMenuBar = !isMenuBarDark;
+      
+      // Choose frame files based on menubar appearance
+      let frame1Name, frame2Name;
+      if (isLightMenuBar) {
+        // Light menubar - use black frames for visibility
+        frame1Name = 'frame1-blackpng.png';
+        frame2Name = 'frame2-black.png';
+        console.log('🌞 Light menubar detected - using black frames for visibility');
+      } else {
+        // Dark menubar - use original frames
+        frame1Name = 'frame1.png';
+        frame2Name = 'frame2.png';
+        console.log('🌙 Dark menubar detected - using original frames');
+      }
+      
+      // Load the appropriate frames
+      const frame1Path = path.join(__dirname, 'assets', frame1Name);
+      const frame2Path = path.join(__dirname, 'assets', frame2Name);
+      
+      const frame1 = nativeImage.createFromPath(frame1Path);
       const frame2 = nativeImage.createFromPath(frame2Path);
       
       // Use native menu bar size for best quality (no resizing needed if source is 22x22)
@@ -77,7 +210,7 @@ class MenuBarAnimator {
         frame2.getSize().width === targetSize ? frame2 : frame2.resize({ width: targetSize, height: targetSize })
       ];
       
-      console.log('Frames loaded successfully');
+      console.log(`Frames loaded successfully (${isLightMenuBar ? 'light' : 'dark'} menubar)`);
     } catch (error) {
       console.error('Error loading frames:', error);
       
@@ -88,26 +221,41 @@ class MenuBarAnimator {
 
   createFallbackFrames() {
     // Create simple fallback frames for testing when images aren't available
-    const canvas = require('canvas');
+    // Use Electron's nativeImage to create simple colored squares
     
-    // Frame 1 - Red square (using optimal 22x22 size)
-    const canvas1 = canvas.createCanvas(22, 22);
-    const ctx1 = canvas1.getContext('2d');
-    ctx1.fillStyle = '#FF0000';
-    ctx1.fillRect(0, 0, 22, 22);
+    // Check for manual override or auto-detect
+    let isLightMenuBar;
+    if (this.forceTheme === 'light') {
+      isLightMenuBar = true;
+    } else if (this.forceTheme === 'dark') {
+      isLightMenuBar = false;
+    } else {
+      isLightMenuBar = !nativeTheme.shouldUseDarkColors;
+    }
     
-    // Frame 2 - Blue square (using optimal 22x22 size)
-    const canvas2 = canvas.createCanvas(22, 22);
-    const ctx2 = canvas2.getContext('2d');
-    ctx2.fillStyle = '#0000FF';
-    ctx2.fillRect(0, 0, 22, 22);
+    // Create simple 22x22 images using nativeImage.createEmpty()
+    const frame1 = nativeImage.createEmpty();
+    const frame2 = nativeImage.createEmpty();
     
-    this.frames = [
-      nativeImage.createFromBuffer(canvas1.toBuffer()),
-      nativeImage.createFromBuffer(canvas2.toBuffer())
-    ];
+    // Since we can't easily create colored squares without canvas,
+    // we'll use a very simple approach: create template images
+    frame1.addRepresentation({
+      scaleFactor: 1.0,
+      width: 22,
+      height: 22,
+      buffer: Buffer.alloc(22 * 22 * 4, isLightMenuBar ? 0 : 255) // Black or white pixels
+    });
     
-    console.log('Using fallback frames (colored squares)');
+    frame2.addRepresentation({
+      scaleFactor: 1.0,
+      width: 22,
+      height: 22,
+      buffer: Buffer.alloc(22 * 22 * 4, isLightMenuBar ? 64 : 128) // Gray pixels
+    });
+    
+    this.frames = [frame1, frame2];
+    
+    console.log(`Using fallback frames (${isLightMenuBar ? 'light' : 'dark'} menubar simple squares)`);
   }
 
   startAnimation(interval = 500) {
