@@ -6,9 +6,10 @@ Bring Tony Stark's genius to your macOS menu bar! Watch a pixelated Tony work ti
 
 - 🤖 **Pixelated Tony Stark**: Watch Tony hammer away at his first prototype
 - 🎨 **Retro 8-bit Style**: Charming pixel art brings nostalgia to your workflow
-- 🌓 **Adaptive Theming**: Automatically switches between light/dark frames based on your wallpaper
+- 🌓 **Smart Adaptive Theming**: Automatically switches between light/dark frames for optimal visibility
+- 🔧 **Manual Theme Override**: Force light or dark frames when auto-detection needs adjustment
 - ⚡ **Adjustable Workshop Pace**: Control how fast Tony works (100ms to 1000ms)
-- 🔧 **Interactive Workshop**: Right-click to control Tony's workspace
+- 🛠️ **Interactive Workshop**: Right-click to control Tony's workspace
 - 🚀 **Lightweight & Fun**: Minimal resource usage, maximum entertainment
 - 💻 **Menu Bar Genius**: Lives quietly in your menu bar, no dock clutter
 - 🦾 **Mark I Vibes**: Relive the cave workshop from the first Iron Man movie
@@ -43,7 +44,12 @@ Right-click Tony's workshop to access:
   - *Medium* (500ms) - Steady progress on the Mark I
   - *Fast* (200ms) - Focused and determined 
   - *Very Fast* (100ms) - Urgent cave escape mode!
+- **Theme Override** - Manual control over frame selection:
+  - *Auto (System Detection)* - Let the app automatically detect your menubar theme
+  - *Force Light Menubar* - Use black frames for light menubars/wallpapers
+  - *Force Dark Menubar* - Use original frames for dark menubars/wallpapers  
 - **Refresh Frames (Theme)** - Manually reload frames if theme detection needs updating
+- **Debug Theme Info** - View current theme detection status and settings
 - **Close Workshop** - End Tony's work session
 
 ## Share Tony's Workshop
@@ -64,35 +70,66 @@ npm run dev
 
 ## Adaptive Theming 🌓
 
-Tony's workshop automatically adapts to your Mac's appearance:
+Tony's workshop intelligently adapts to your Mac's menubar appearance for optimal visibility:
 
-### How it works:
-- **Light Mode/Wallpaper**: Uses `frame1-blackpng.png` and `frame2-black.png` for maximum visibility
-- **Dark Mode/Wallpaper**: Uses `frame1.png` and `frame2.png` (original frames)
-- **Real-time switching**: Changes frames instantly when you switch themes
-- **Manual refresh**: Right-click → "Refresh Frames (Theme)" to force reload
+### Automatic Detection
+- **Light Menubar/Wallpaper**: Uses `frame1-blackpng.png` and `frame2-black.png` for maximum contrast
+- **Dark Menubar/Wallpaper**: Uses `frame1.png` and `frame2.png` (original frames)
+- **Real-time switching**: Automatically detects theme changes and updates frames
+- **Smart fallbacks**: Creates simple backup frames if image files are missing
+
+### Manual Override Controls
+Sometimes automatic detection needs help! Use the **Theme Override** menu:
+
+- **Auto (System Detection)** - Default automatic detection
+- **Force Light Menubar** - Use black frames (perfect for light backgrounds)
+- **Force Dark Menubar** - Use original frames (perfect for dark backgrounds)
+
+### Troubleshooting Theme Issues
+1. **App shows wrong frames?** → Right-click → "Theme Override" → Choose the correct option
+2. **Need to test detection?** → Right-click → "Debug Theme Info" to see current settings
+3. **Frames not updating?** → Right-click → "Refresh Frames (Theme)" to reload
 
 ### Frame Requirements:
 ```
 assets/
-├── frame1.png          ← For dark backgrounds (original)
-├── frame2.png          ← For dark backgrounds (original)
-├── frame1-blackpng.png ← For light backgrounds (high contrast)
-└── frame2-black.png    ← For light backgrounds (high contrast)
+├── frame1.png          ← For dark backgrounds (original Tony frames)
+├── frame2.png          ← For dark backgrounds (original Tony frames)  
+├── frame1-blackpng.png ← For light backgrounds (high contrast black Tony)
+└── frame2-black.png    ← For light backgrounds (high contrast black Tony)
 ```
+
+> **Pro Tip**: If Tony is hard to see on your menubar, use "Force Light Menubar" to switch to high-contrast black frames!
+
+## Recent Updates 🆕
+
+### v1.1 - Adaptive Theming Update
+- ✅ **Smart Theme Detection**: Automatically detects light/dark menubar appearance
+- ✅ **Manual Override**: Force light or dark frames when needed
+- ✅ **Real-time Updates**: Frames change instantly when you switch themes
+- ✅ **Debug Tools**: New "Debug Theme Info" and "Theme Override" menu options
+- ✅ **Improved Fallbacks**: Better backup frames when images are missing
+- ✅ **Enhanced Controls**: More granular control over frame selection
+
+### Troubleshooting
+- **Tony not visible on light menubar?** → Right-click → Theme Override → "Force Light Menubar"
+- **App crashes on startup?** → Make sure all frame files exist in the `assets/` folder
+- **Frames not switching automatically?** → Try "Refresh Frames (Theme)" or use manual override
 
 ## Customize the Workshop
 
 Make it your own Iron Man experience:
 - **Modify `main.js`** - Change how Tony works and moves
-- **Adjust timing** - Fine-tune Tony's hammer strikes
+- **Adjust timing** - Fine-tune Tony's hammer strikes  
 - **Add more frames** - Create a longer animation sequence (Tony welding, sparks flying, etc.)
-- **Create theme variants** - Design frames for different visibility needs
+- **Create theme variants** - Design frames for different visibility needs (light/dark)
 - **Workshop themes** - Customize the right-click menu with more Marvel references
-
+- **Advanced theming** - Modify the `forceTheme` logic for custom detection rules
 
 ### Your Pixel Art Mission:
-Create two epic 22x22 pixel frames:
+Create epic 22x22 pixel frames for both themes:
 
+- **Dark backgrounds**: `frame1.png` & `frame2.png` (original bright/colored Tony)
+- **Light backgrounds**: `frame1-blackpng.png` & `frame2-black.png` (high-contrast black Tony)
 
-**"I am Iron Man"**
+**"I am Iron Man"** - Now with perfect visibility on any background! 🦾✨
