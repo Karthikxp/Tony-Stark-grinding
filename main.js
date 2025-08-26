@@ -1,5 +1,6 @@
 const { app, Tray, Menu, nativeImage, nativeTheme, systemPreferences } = require('electron');
 const path = require('path');
+const si = require('systeminformation');
 
 class MenuBarAnimator {
   constructor() {
@@ -9,19 +10,19 @@ class MenuBarAnimator {
     this.frames = [];
     this.isAnimating = false;
     this.forceTheme = null; // null = auto, 'light' = force light, 'dark' = force dark
+    this.cpuCheckInterval = null;
   }
 
   createTray() {
     // Load the two animation frames
     this.loadFrames();
-    
+
     // Create tray with first frame
     this.tray = new Tray(this.frames[0]);
-    
+
     // Listen for theme changes and reload frames accordingly
     nativeTheme.on('updated', () => {
       console.log('🔄 Theme change detected, reloading frames...');
-      const oldFrames = this.frames.length;
       this.loadFrames();
       // Update current frame display
       if (this.tray && this.frames.length > 0) {
@@ -31,33 +32,12 @@ class MenuBarAnimator {
         console.log('❌ Failed to update frames');
       }
     });
-    
+
     // Set up context menu
     const contextMenu = Menu.buildFromTemplate([
       {
         label: 'Toggle Animation',
         click: () => this.toggleAnimation()
-      },
-      {
-        label: 'Set Speed',
-        submenu: [
-          {
-            label: 'Slow (1000ms)',
-            click: () => this.setAnimationSpeed(1000)
-          },
-          {
-            label: 'Medium (500ms)',
-            click: () => this.setAnimationSpeed(500)
-          },
-          {
-            label: 'Fast (200ms)',
-            click: () => this.setAnimationSpeed(200)
-          },
-          {
-            label: 'Very Fast (100ms)',
-            click: () => this.setAnimationSpeed(100)
-          }
-        ]
       },
       { type: 'separator' },
       {
@@ -126,12 +106,13 @@ class MenuBarAnimator {
         click: () => app.quit()
       }
     ]);
-    
+
     this.tray.setContextMenu(contextMenu);
     this.tray.setToolTip('Tony Stark\'s Workshop - Pixelated Iron Man Animation');
-    
-    // Start animation by default
-    this.startAnimation(500); // Default 500ms interval
+
+    // Start animation and CPU monitoring
+    this.startAnimation(1000); // Start with a default slow speed
+    this.startCpuMonitoring();
   }
 
   loadFrames() {
@@ -139,7 +120,7 @@ class MenuBarAnimator {
       // Check multiple indicators for menubar appearance
       const shouldUseDarkColors = nativeTheme.shouldUseDarkColors;
       const themeSource = nativeTheme.themeSource;
-      
+
       // Check for manual override first
       let isMenuBarDark;
       if (this.forceTheme === 'light') {
@@ -152,13 +133,13 @@ class MenuBarAnimator {
         // Auto detection
         isMenuBarDark = shouldUseDarkColors;
       }
-      
+
       // On macOS, try to get more accurate menubar appearance detection
       if (process.platform === 'darwin') {
         try {
           // Check if we can get the accent color - this helps determine actual appearance
           const accentColor = systemPreferences.getAccentColor();
-          
+
           // Additional check: if system is in auto mode and we have a light wallpaper,
           // the menubar might still be light even with dark mode enabled
           if (themeSource === 'system') {
@@ -170,16 +151,16 @@ class MenuBarAnimator {
           console.log('Could not get system preferences, using nativeTheme');
         }
       }
-      
+
       console.log(`🔍 Theme debug info:
         - shouldUseDarkColors: ${shouldUseDarkColors}
         - themeSource: ${themeSource}
         - Platform: ${process.platform}
         - Detected menubar: ${isMenuBarDark ? 'Dark' : 'Light'}`);
-      
+
       // Use light frames (black) when menubar appears light
       const isLightMenuBar = !isMenuBarDark;
-      
+
       // Choose frame files based on menubar appearance
       let frame1Name, frame2Name;
       if (isLightMenuBar) {
@@ -193,27 +174,27 @@ class MenuBarAnimator {
         frame2Name = 'frame2.png';
         console.log('🌙 Dark menubar detected - using original frames');
       }
-      
+
       // Load the appropriate frames
       const frame1Path = path.join(__dirname, 'assets', frame1Name);
       const frame2Path = path.join(__dirname, 'assets', frame2Name);
-      
+
       const frame1 = nativeImage.createFromPath(frame1Path);
       const frame2 = nativeImage.createFromPath(frame2Path);
-      
+
       // Use native menu bar size for best quality (no resizing needed if source is 22x22)
       // Check if images are already the right size to avoid unnecessary resizing
       const targetSize = 22;
-      
+
       this.frames = [
         frame1.getSize().width === targetSize ? frame1 : frame1.resize({ width: targetSize, height: targetSize }),
         frame2.getSize().width === targetSize ? frame2 : frame2.resize({ width: targetSize, height: targetSize })
       ];
-      
+
       console.log(`Frames loaded successfully (${isLightMenuBar ? 'light' : 'dark'} menubar)`);
     } catch (error) {
       console.error('Error loading frames:', error);
-      
+
       // Fallback: create simple colored squares for testing
       this.createFallbackFrames();
     }
@@ -222,7 +203,7 @@ class MenuBarAnimator {
   createFallbackFrames() {
     // Create simple fallback frames for testing when images aren't available
     // Use Electron's nativeImage to create simple colored squares
-    
+
     // Check for manual override or auto-detect
     let isLightMenuBar;
     if (this.forceTheme === 'light') {
@@ -232,11 +213,11 @@ class MenuBarAnimator {
     } else {
       isLightMenuBar = !nativeTheme.shouldUseDarkColors;
     }
-    
+
     // Create simple 22x22 images using nativeImage.createEmpty()
     const frame1 = nativeImage.createEmpty();
     const frame2 = nativeImage.createEmpty();
-    
+
     // Since we can't easily create colored squares without canvas,
     // we'll use a very simple approach: create template images
     frame1.addRepresentation({
@@ -245,16 +226,16 @@ class MenuBarAnimator {
       height: 22,
       buffer: Buffer.alloc(22 * 22 * 4, isLightMenuBar ? 0 : 255) // Black or white pixels
     });
-    
+
     frame2.addRepresentation({
       scaleFactor: 1.0,
       width: 22,
       height: 22,
       buffer: Buffer.alloc(22 * 22 * 4, isLightMenuBar ? 64 : 128) // Gray pixels
     });
-    
+
     this.frames = [frame1, frame2];
-    
+
     console.log(`Using fallback frames (${isLightMenuBar ? 'light' : 'dark'} menubar simple squares)`);
   }
 
@@ -262,13 +243,13 @@ class MenuBarAnimator {
     if (this.animationInterval) {
       clearInterval(this.animationInterval);
     }
-    
+
     this.isAnimating = true;
     this.animationInterval = setInterval(() => {
       this.nextFrame();
     }, interval);
-    
-    console.log(`Animation started with ${interval}ms interval`);
+
+    // console.log(`Animation started with ${interval}ms interval`);
   }
 
   stopAnimation() {
@@ -283,8 +264,9 @@ class MenuBarAnimator {
   toggleAnimation() {
     if (this.isAnimating) {
       this.stopAnimation();
+      this.stopCpuMonitoring();
     } else {
-      this.startAnimation(500);
+      this.startCpuMonitoring();
     }
   }
 
@@ -296,9 +278,44 @@ class MenuBarAnimator {
 
   nextFrame() {
     if (this.frames.length === 0) return;
-    
+
     this.currentFrame = (this.currentFrame + 1) % this.frames.length;
     this.tray.setImage(this.frames[this.currentFrame]);
+  }
+
+  startCpuMonitoring() {
+    if (this.cpuCheckInterval) {
+      clearInterval(this.cpuCheckInterval);
+    }
+
+    this.cpuCheckInterval = setInterval(() => {
+      si.currentLoad().then(data => {
+        const load = data.currentLoad;
+        let interval;
+
+        if (load > 60) {
+          interval = 100; // Very Fast
+        } else if (load > 30) {
+          interval = 200; // Fast
+        } else if (load > 10) {
+          interval = 500; // Medium
+        } else {
+          interval = 1000; // Slow
+        }
+        
+        console.log(`CPU Load: ${load.toFixed(2)}%, Animation Interval: ${interval}ms`);
+        this.setAnimationSpeed(interval);
+      }).catch(error => {
+        console.error('Error getting CPU load:', error);
+      });
+    }, 2000); // Check CPU usage every 2 seconds
+  }
+
+  stopCpuMonitoring() {
+    if (this.cpuCheckInterval) {
+      clearInterval(this.cpuCheckInterval);
+      this.cpuCheckInterval = null;
+    }
   }
 }
 
@@ -318,6 +335,7 @@ app.on('before-quit', () => {
   // Clean up when quitting
   if (global.animator) {
     global.animator.stopAnimation();
+    global.animator.stopCpuMonitoring();
   }
 });
 

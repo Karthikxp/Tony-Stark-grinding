@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Tony Stark's pixelated workshop in your system tray/menu bar",
   "main": "main.js",
-      "scripts": {
+  "scripts": {
     "start": "electron .",
     "dev": "electron . --dev",
     "build": "electron-builder",
@@ -12,7 +12,12 @@
     "build-all": "electron-builder --mac --win",
     "pack": "electron-builder --dir"
   },
-  "keywords": ["electron", "menubar", "animation", "pixel-art"],
+  "keywords": [
+    "electron",
+    "menubar",
+    "animation",
+    "pixel-art"
+  ],
   "author": "Karthik",
   "license": "MIT",
   "devDependencies": {
@@ -33,7 +38,10 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ]
     },
@@ -42,11 +50,17 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64", "ia32"]
+          "arch": [
+            "x64",
+            "ia32"
+          ]
         },
         {
           "target": "portable",
-          "arch": ["x64", "ia32"]
+          "arch": [
+            "x64",
+            "ia32"
+          ]
         }
       ]
     },
@@ -61,5 +75,8 @@
       "assets/**/*",
       "node_modules/**/*"
     ]
+  },
+  "dependencies": {
+    "systeminformation": "^5.27.8"
   }
 }
