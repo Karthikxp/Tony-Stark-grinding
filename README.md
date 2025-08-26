@@ -8,7 +8,7 @@ Bring Tony Stark's genius to your macOS menu bar! Watch a pixelated Tony work ti
 - 🎨 **Retro 8-bit Style**: Charming pixel art brings nostalgia to your workflow
 - 🌓 **Smart Adaptive Theming**: Automatically switches between light/dark frames for optimal visibility
 - 🔧 **Manual Theme Override**: Force light or dark frames when auto-detection needs adjustment
-- ⚡ **Adjustable Workshop Pace**: Control how fast Tony works (100ms to 1000ms)
+- ⚡ **Dynamic Animation Speed**: Animation speed is driven by your Mac's CPU load
 - 🛠️ **Interactive Workshop**: Right-click to control Tony's workspace
 - 🚀 **Lightweight & Fun**: Minimal resource usage, maximum entertainment
 - 💻 **Menu Bar Genius**: Lives quietly in your menu bar, no dock clutter
@@ -39,11 +39,6 @@ Bring Tony Stark's genius to your macOS menu bar! Watch a pixelated Tony work ti
 
 Right-click Tony's workshop to access:
 - **Toggle Workshop** - Give Tony a break or get him back to work
-- **Set Work Pace** - Control Tony's productivity:
-  - *Slow* (1000ms) - Tony takes his time, methodical genius
-  - *Medium* (500ms) - Steady progress on the Mark I
-  - *Fast* (200ms) - Focused and determined 
-  - *Very Fast* (100ms) - Urgent cave escape mode!
 - **Theme Override** - Manual control over frame selection:
   - *Auto (System Detection)* - Let the app automatically detect your menubar theme
   - *Force Light Menubar* - Use black frames for light menubars/wallpapers
@@ -103,7 +98,8 @@ assets/
 
 ## Recent Updates 🆕
 
-### v1.1 - Adaptive Theming Update
+### v1.2 - CPU-Driven Animation Speed
+- ✅ **Dynamic Animation Speed**: Animation speed is now driven by your Mac's CPU load.
 - ✅ **Smart Theme Detection**: Automatically detects light/dark menubar appearance
 - ✅ **Manual Override**: Force light or dark frames when needed
 - ✅ **Real-time Updates**: Frames change instantly when you switch themes
@@ -119,8 +115,7 @@ assets/
 ## Customize the Workshop
 
 Make it your own Iron Man experience:
-- **Modify `main.js`** - Change how Tony works and moves
-- **Adjust timing** - Fine-tune Tony's hammer strikes  
+- **Modify `main.js`** - Change how Tony works and moves  
 - **Add more frames** - Create a longer animation sequence (Tony welding, sparks flying, etc.)
 - **Create theme variants** - Design frames for different visibility needs (light/dark)
 - **Workshop themes** - Customize the right-click menu with more Marvel references
