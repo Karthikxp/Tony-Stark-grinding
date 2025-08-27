@@ -6,6 +6,7 @@ const si = require('systeminformation');
 //peeakaboo motherfuckaaaa
 
 //toodaloo motherfuckaaaa
+//wowzzz
 class MenuBarAnimator {
   constructor() {
     this.tray = null;
