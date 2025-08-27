@@ -1,7 +1,9 @@
 const { app, Tray, Menu, nativeImage, nativeTheme, systemPreferences } = require('electron');
 const path = require('path');
 const si = require('systeminformation');
+//i want this empty slot gone
 
+//peeakaboo motherfuckaaaa
 class MenuBarAnimator {
   constructor() {
     this.tray = null;
