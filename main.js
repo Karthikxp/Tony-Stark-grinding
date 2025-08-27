@@ -4,6 +4,8 @@ const si = require('systeminformation');
 //i want this empty slot gone
 
 //peeakaboo motherfuckaaaa
+
+//toodaloo motherfuckaaaa
 class MenuBarAnimator {
   constructor() {
     this.tray = null;
