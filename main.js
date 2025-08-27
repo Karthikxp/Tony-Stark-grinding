@@ -19,7 +19,7 @@ class MenuBarAnimator {
   }
 
   createTray() {
-    // Load the two animation frames
+    // line 17 changes
     this.loadFrames();
 
     // Create tray with first frame
